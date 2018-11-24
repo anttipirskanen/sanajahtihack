@@ -30,9 +30,9 @@ function start(xmlData) {
         }
         matrix = [
             ['x', 'x', 'x', 'n'],
-            ['a', 'k', 'n', 'e'],
-            ['a', 'k', 'o', 'x'],
-            ['x', 'x', 'x', 'x'],
+            ['x', 'k', 'n', 'e'],
+            ['k', 'a', 'o', 'x'],
+            ['x', 'a', 'x', 'x'],
         ];
         return matrix;
     }
@@ -75,9 +75,9 @@ function findWordPath(word, letterIndex, letterMatrix, coords, usedCoords) {
     try {
         //find first letter
         if(!coords) {
-            for(var x = 0; x < letterMatrix.length; x++) {
-                for(var y = 0; y < letterMatrix[x].length; y++) {
-                    if(letterMatrix[x][y] == word[letterIndex]) {
+            for(var y = 0; y < letterMatrix.length; y++) {
+                for(var x = 0; x < letterMatrix[y].length; x++) {
+                    if(letterMatrix[y][x] == word[letterIndex]) {
                         console.log( word[letterIndex], {x:x, y:y});
                         return findWordPath(word, letterIndex + 1, letterMatrix, {x:x, y:y}, [{x:x, y:y}]);
                     }
@@ -141,7 +141,7 @@ function findWordPath(word, letterIndex, letterMatrix, coords, usedCoords) {
 
 function checkCharAt(char, x, y, matrix) {
     try { 
-        if(matrix[x][y] == char) {
+        if(matrix[y][x] == char) {
             return true;
         }
         return false;
@@ -155,30 +155,27 @@ function checkCharAt(char, x, y, matrix) {
 //Create html of matrix, and show order of characters somewhow
 function getMatrixTable(word, matrix, coordinates) {
     
-    var orderMatrix = JSON.parse(JSON.stringify(matrix));
-    for(var x = 0; x < orderMatrix.length; x++) {
-        for(var y = 0; y < orderMatrix[x].length; y++) {
-            orderMatrix[x][y] = null;
-        }
-    }
-
-    for(var i = 0; i < coordinates.length; i++) {    
-        orderMatrix[coordinates[i].x][coordinates[i].y] = i;
-    }
     var ret = '<table>';
     ret += '<tr><th colspan="4">'+word.join('')+'</th></tr>';
     var count = 0;
-    for(var x = 0; x < matrix.length; x++) {
+    for(var y = 0; y < matrix.length; y++) {
         ret += '<tr>';
-        for(var y = 0; y < matrix[x].length; y++) {   
+        for(var x = 0; x < matrix[y].length; x++) {   
             
-            if(orderMatrix[x][y] != null) {
-                count = count +2;
-                ret += '<td style="color:red;">' + matrix[x][y]+ '</td>';
+            var found = false;
+            for(var i = 0; i < coordinates.length; i++) {
+                if(coordinates[i].x == x && coordinates[i].y == y) {
+                    found = true;
+                }
+            }
+
+            if(found) {
+                ret += '<td style="color:red;">' + matrix[y][x]+ '</td>';
             }
             else {
-                ret += '<td>' + matrix[x][y]+ '</td>';
-            } 
+                ret += '<td>' + matrix[y][x]+ '</td>';
+            }
+            
         }
         ret += '</tr>'
     }
